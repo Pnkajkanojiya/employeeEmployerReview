@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
+import AuthPageLayout from '@/common/components/layouts/AuthPageLayout';
 import Link from 'next/link';
-import AuthPageLayout from '../../../common/components/layouts/AuthPageLayout';
+import { FormEvent, useEffect, useState } from 'react';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -58,7 +58,10 @@ const Login = () => {
               {showPassword ? '🙈' : '👁️'}
             </button>
           </div>
-          <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline float-right mt-1">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-blue-600 hover:underline float-right mt-1"
+          >
             Forgot Password?
           </Link>
         </div>
@@ -95,8 +98,6 @@ const Login = () => {
 };
 
 export default Login;
-
-
 
 // 'use client';
 // import React, { useState, FormEvent, ChangeEvent } from 'react';
@@ -323,5 +324,3 @@ export default Login;
 // };
 
 // export default Login;
-
-

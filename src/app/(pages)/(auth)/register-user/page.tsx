@@ -1,8 +1,7 @@
 'use client';
-import React, { useState, FormEvent, ChangeEvent } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
 import AuthPageLayout from '@/common/components/layouts/AuthPageLayout';
+import Link from 'next/link';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 
 const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -12,12 +11,13 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [rememberMe, setRememberMe] = useState<boolean>(false);
+  console.log(setShowPassword);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     // Validate if passwords match
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      alert('Passwords do not match');
       return;
     }
     console.log({ email, fullName, mobileNumber, password, rememberMe });
@@ -89,7 +89,10 @@ const Register: React.FC = () => {
               </div>
 
               <div className="mb-2">
-                <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="mobileNumber"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Mobile Number
                 </label>
                 <input
@@ -121,7 +124,10 @@ const Register: React.FC = () => {
               </div>
 
               <div className="mb-2">
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Confirm Password
                 </label>
                 <div className="relative">
