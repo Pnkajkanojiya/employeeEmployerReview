@@ -1,54 +1,58 @@
 'use client';
+
 import AuthPageLayout from '@/common/components/layouts/AuthPageLayout';
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { loginSchema, LoginSchema } from '@/common/validations/authSchemas';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Delay the password visibility state change until after the first render
-  useEffect(() => {
-    setShowPassword(false); // Or set an initial state that won't cause hydration errors
-  }, []);
+  // Form setup
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log({ email, password, rememberMe });
+  // Submit handler
+  const onSubmit = (data: LoginSchema) => {
+    console.log(data); // This will include email, password, and rememberMe
   };
 
   return (
     <AuthPageLayout>
-      <h2 className="text-2xl font-bold text-black mt-6">Login !</h2>
-      <p className="text-gray-900 text-sm mb-4">Enter your Email Id & Password to Login</p>
+      <h2 className="text-2xl font-bold text-black mt-6">Login!</h2>
+      <p className="text-gray-900 text-sm mb-4">Enter your Email ID & Password to login</p>
 
-      <form onSubmit={handleSubmit}>
-        {/* Email Input */}
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        {/* Email */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register('email')}
             placeholder="Enter your ID"
             className="px-3 py-2 border border-gray-300 rounded-md w-full"
-            required
           />
+          {errors.email && (
+            <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+          )}
         </div>
 
-        {/* Password Input */}
+        {/* Password */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter Password"
+              {...register('password')}
+              placeholder="Enter password"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
             />
             <button
               type="button"
@@ -58,6 +62,9 @@ const Login = () => {
               {showPassword ? '🙈' : '👁️'}
             </button>
           </div>
+          {errors.password && (
+            <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
+          )}
           <Link
             href="/forgot-password"
             className="text-sm text-blue-600 hover:underline float-right mt-1"
@@ -71,14 +78,14 @@ const Login = () => {
           <label className="inline-flex items-center">
             <input
               type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
+              {...register('rememberMe')}
               className="mr-2"
             />
             <span className="text-sm text-gray-700">Remember me</span>
           </label>
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
@@ -87,6 +94,7 @@ const Login = () => {
         </button>
       </form>
 
+      {/* Register link */}
       <p className="text-sm text-center text-gray-600 mt-4">
         Don&apos;t have an account?{' '}
         <Link href="/register" className="text-blue-600 hover:underline">
@@ -98,6 +106,7 @@ const Login = () => {
 };
 
 export default Login;
+
 
 // 'use client';
 // import React, { useState, FormEvent, ChangeEvent } from 'react';

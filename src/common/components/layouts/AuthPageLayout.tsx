@@ -21,7 +21,7 @@ const AuthPageLayout: React.FC<AuthPageLayoutProps> = ({ children }) => {
 
     return (
         <div className="bg-gray-900 flex items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-5xl overflow-hidden bg-white h-auto md:h-[585px] rounded-lg shadow-lg relative">
+            <div className="w-full max-w-5xl overflow-hidden bg-white h-auto md:h-[685px] rounded-lg shadow-lg relative">
                 <div className="flex flex-col md:flex-row h-full">
                     {/* Left Welcome Panel */}
                     <div className="relative hidden md:flex w-full md:w-1/2 p-8 flex-col justify-center items-center text-white overflow-hidden">
@@ -53,8 +53,8 @@ const AuthPageLayout: React.FC<AuthPageLayoutProps> = ({ children }) => {
                                     </linearGradient>
                                 </defs>
                             </svg>
-                            <div className="absolute bottom-[-124px] -left-26 w-64 h-64 rounded-full bg-[linear-gradient(32.35deg,#007BF8_15.82%,#012770_67.43%)] transform scale-x-[-1]" />
-                            <div className="absolute top-85 right-17 w-38 h-38 rounded-full bg-gradient-to-r from-[#007BF8] to-[#012770] transform scale-x-[-1]" />
+                            <div className="absolute bottom-[-120px] -left-24 w-74 h-74 rounded-full bg-[linear-gradient(32.35deg,#007BF8_15.82%,#012770_67.43%)] transform scale-x-[-1]" />
+                            <div className="absolute top-95 right-17 w-48 h-48 rounded-full bg-gradient-to-r from-[#007BF8] to-[#012770] transform scale-x-[-1]" />
                         </div>
                         <div className="relative z-10 text-center" style={{ left: '-10%', top: '-50px' }}>
                             <h1 className="text-4xl font-bold mb-2">WELCOME</h1>
