@@ -22,3 +22,5 @@ const StarSVG: React.FC = () => (
 );
 
 export default StarSVG;
+
+
