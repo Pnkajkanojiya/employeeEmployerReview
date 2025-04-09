@@ -1,11 +1,11 @@
 'use client';
 
 import AuthPageLayout from '@/common/components/layouts/AuthPageLayout';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { loginSchema, LoginSchema } from '@/common/validations/authSchemas';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,9 +39,7 @@ const Login = () => {
             placeholder="Enter your ID"
             className="px-3 py-2 border border-gray-300 rounded-md w-full"
           />
-          {errors.email && (
-            <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
-          )}
+          {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
         </div>
 
         {/* Password */}
@@ -76,11 +74,7 @@ const Login = () => {
         {/* Remember me */}
         <div className="mb-4">
           <label className="inline-flex items-center">
-            <input
-              type="checkbox"
-              {...register('rememberMe')}
-              className="mr-2"
-            />
+            <input type="checkbox" {...register('rememberMe')} className="mr-2" />
             <span className="text-sm text-gray-700">Remember me</span>
           </label>
         </div>
@@ -106,7 +100,6 @@ const Login = () => {
 };
 
 export default Login;
-
 
 // 'use client';
 // import React, { useState, FormEvent, ChangeEvent } from 'react';

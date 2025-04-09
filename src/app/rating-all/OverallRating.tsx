@@ -1,22 +1,19 @@
 'use client';
-import Glowstar from '@/common/components/emojis/Glowstar';
-import Unglowstar from '@/common/components/emojis/Unglowstar';
+import { reviewSchema } from '@/common/validations/authSchemas';
 import Image from 'next/image';
 import { useState } from 'react';
-// import { FaStar } from 'react-icons/fa';
+import AverageRatingDisplay from './components/AverageRatingDisplay';
+import RatingCriteria from './components/RatingCriteria';
 
 export default function ReviewForm() {
-  const [overallRating, setOverallRating] = useState(3);
+  const [overallRating] = useState(3);
   const [ratings, setRatings] = useState({
-    workLifeBalance: 3,
-    salaryBenefits: 3,
-    promotionsAppraisal: 3,
-    jobSecurity: 3,
-    skillDevelopmentLearning: 3,
-    workSatisfaction: 3,
-    companyCulture: 3,
+    culture: 0,
+    management: 0,
+    workLifeBalance: 0,
+    salaryBenefits: 0,
   });
-  
+
   const [companyName, setCompanyName] = useState('');
   const [review, setReview] = useState('');
   const [pros, setPros] = useState('');
@@ -24,18 +21,14 @@ export default function ReviewForm() {
   const [designation, setDesignation] = useState('');
   const [category, setCategory] = useState('');
   const [anonymous, setAnonymous] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleRatingChange = (category: string, value: number) => {
-    setRatings((prevRatings) => ({ ...prevRatings, [category]: value }));
+    setRatings((prev) => ({ ...prev, [category]: value }));
   };
-  
-
   const handleSubmit = () => {
-    //Ismein e pass kiya hai parameter mein jo a
-    // e.preventDefault();
     const formData = {
       overallRating,
-      ratings,
       companyName,
       review,
       pros,
@@ -43,9 +36,40 @@ export default function ReviewForm() {
       designation,
       category,
       anonymous,
+      ratings,
     };
-    console.log('Submitted Review:', formData); 
-    // You can replace this with an API call
+
+    const result = reviewSchema.safeParse(formData);
+
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      const ratingErrors = fieldErrors['ratings'];
+      const combinedErrors: Record<string, string> = {};
+
+      // Top-level errors (excluding nested ratings)
+      Object.entries(fieldErrors).forEach(([key, value]) => {
+        if (key !== 'ratings' && value?.length) {
+          combinedErrors[key] = value[0];
+        }
+      });
+
+      // Nested ratings errors
+      if (typeof ratingErrors === 'object' && ratingErrors !== null) {
+        Object.entries(ratingErrors).forEach(([key, value]) => {
+          if (value?.length) {
+            combinedErrors[`ratings.${key}`] = value[0];
+          }
+        });
+      }
+
+      setErrors(combinedErrors);
+
+      return;
+    }
+
+    setErrors({});
+    console.log('✅ Submitted Review:', result.data);
+    // Proceed with API call or logic here
   };
 
   return (
@@ -72,100 +96,95 @@ export default function ReviewForm() {
           </div>
 
           <div className="text-center mb-6">
-            <p className="text-2xl font-semibold text-white mb-2">
-              Overall Rating <span className="text-[#F94A4A]">*</span>
-            </p>
+            <p className="text-2xl font-semibold text-white mb-2">Overall Rating</p>
 
             <div className="flex justify-center gap-4">
-              {[...Array(5)].map((_, index) =>
+              {/* {[...Array(5)].map((_, index) =>
                 index < overallRating ? (
                   <Glowstar key={index} count={1} onClick={() => setOverallRating(index + 1)} />
                 ) : (
                   <Unglowstar key={index} count={1} onClick={() => setOverallRating(index + 1)} />
                 )
-              )}
+              )} */}
+
+              <AverageRatingDisplay ratings={ratings} />
             </div>
+            {errors.overallRating && (
+              <p className="text-red-500 text-sm mt-1">{errors.overallRating}</p>
+            )}
           </div>
 
           <div className="bg-white max-w-6xl rounded-2xl p-8 md:p-12 shadow-xl space-y-6">
-            <p className="text-black font-bold text-xl">
-              {' '}
-              Company Name <span className="text-[#F94A4A]">*</span>{' '}
-            </p>
-            <input
-              type="text"
-              placeholder="Enter Company Name"
-              className="w-full border p-2 rounded mt-2 border-gray-400 text-gray-700"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-            />
-
-            <div className="mt-4">
-              <p className="font-bold text-xl text-black  mb-2">
-                Rate your company on the following criteria
-                <span className="text-[#F94A4A]"> *</span>
+            <div>
+              <p className="text-black font-bold text-xl">
+                Company Name <span className="text-[#F94A4A]">*</span>
               </p>
-              <div className="flex flex-wrap">
-                {Object.keys(ratings).map((key) => (
-                  <div key={key} className="w-1/2 mb-3 p-2">
-                    <div className="w-full">
-                      <p className="capitalize text-black">{key.replace(/([A-Z])/g, ' $1')}</p>
-                      <div className="flex">
-                      <div className="flex gap-2 mt-1">
-  {[...Array(5)].map((_, i) =>
-    i < ratings[key as keyof typeof ratings] ? (
-      <Glowstar key={i} onClick={() => handleRatingChange(key, i + 1)} />
-    ) : (
-      <Unglowstar key={i} onClick={() => handleRatingChange(key, i + 1)} />
-    )
-  )}
-</div>
-
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <input
+                type="text"
+                placeholder="Enter Company Name"
+                className="w-full border p-2 rounded mt-2 border-gray-400 text-gray-700"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+              />
+              {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName}</p>}
             </div>
 
-            <p className="text-black font-bold mt-5">Write Your Review</p>
-            <textarea
-              placeholder="Share your experience..."
-              className="w-full border-gray-400 text-gray-700 border p-2 rounded mt-2 h-40"
-              value={review}
-              onChange={(e) => setReview(e.target.value)}
-            ></textarea>
+            <RatingCriteria ratings={ratings} handleRatingChange={handleRatingChange} errors={{}} />
+            {Object.entries(ratings).map(([key]) => {
+              const error = errors[`ratings.${key}`];
+              return (
+                error && (
+                  <p key={key} className="text-red-500 text-sm">
+                    {key.replace(/([A-Z])/g, ' $1')} is required
+                  </p>
+                )
+              );
+            })}
 
             <div>
-              <p className="text-black font-semibold">Pro s</p>
-              <input className="w-full border p-3 mt-2 rounded-md ..." />
+              <p className="text-black font-bold text-xl">
+                Write Your Review <span className="text-[#F94A4A]">*</span>
+              </p>
+              <textarea
+                placeholder="Share your experience..."
+                className="w-full border-gray-400 text-gray-700 border p-2 rounded mt-2 h-40"
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+              ></textarea>
+              {errors.review && <p className="text-red-500 text-sm">{errors.review}</p>}
             </div>
 
-            <input
-              type="text"
-              placeholder="Pros"
-              className="w-full border border-gray-400 text-gray-700 p-2 rounded mt-2"
-              value={pros}
-              onChange={(e) => setPros(e.target.value)}
-            />
-            <p className="text-black font-bold mt-5">Con s</p>
-            <input
-              type="text"
-              placeholder="Cons"
-              className="w-full border p-2 border-gray-400 text-gray-700 rounded mt-2"
-              value={cons}
-              onChange={(e) => setCons(e.target.value)}
-            />
+            <div>
+              <p className="text-black font-semibold">Pros</p>
+              <input
+                type="text"
+                placeholder="Pros"
+                className="w-full border border-gray-400 text-gray-700 p-2 rounded mt-2"
+                value={pros}
+                onChange={(e) => setPros(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <p className="text-black font-bold mt-5">Cons</p>
+              <input
+                type="text"
+                placeholder="Cons"
+                className="w-full border p-2 border-gray-400 text-gray-700 rounded mt-2"
+                value={cons}
+                onChange={(e) => setCons(e.target.value)}
+              />
+            </div>
 
             <div className="flex gap-2 mt-2">
               <div className="w-1/2">
                 <p className="text-black font-bold mt-5">Designation</p>
                 <select
-                  className="border p-2 rounded text-gray-700 border-gray-400"
+                  className="border p-2 rounded text-gray-700 border-gray-400 w-full"
                   value={designation}
                   onChange={(e) => setDesignation(e.target.value)}
                 >
-                  <option>Select</option>
+                  <option value="">Select</option>
                   <option>Software Engineer</option>
                   <option>Manager</option>
                   <option>Intern</option>
@@ -178,7 +197,7 @@ export default function ReviewForm() {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  <option>Select</option>
+                  <option value="">Select</option>
                   <option>IT</option>
                   <option>Finance</option>
                   <option>Healthcare</option>
