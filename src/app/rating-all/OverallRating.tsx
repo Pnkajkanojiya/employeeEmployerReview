@@ -74,13 +74,13 @@ export default function ReviewForm() {
 
   return (
     <div>
-      <div className="bg-white h-30">
+      <div className="bg-[#007DFC] h-25">
         <Image
           src="/assets/png/emp_logo.png"
           alt="Logo"
           className="ml-5 pt-4"
-          width={200}
-          height={70}
+          width={180}
+          height={60}
         />
       </div>
 
